@@ -81,11 +81,11 @@
 
 
     
-  
+      {% include "includes/footer.html" %}
       
       </div>
 
-      {% include "includes/footer.html" %}
+      
 
     </div>
 
@@ -136,6 +136,7 @@ function brandRatingChart(brand) {
     var ratings_array=[]
     var weeks = []
     var new_endpoint = endpoint+queryParams
+    console.log(new_endpoint)
     var overall_ratings=[]
     $.ajax({
       method:"GET",
@@ -320,6 +321,13 @@ function aspectRatingChart(brand) {
             display:true,
 						position: 'top',
 					},
+          
+          plugins: {
+            colorschemes: {
+                scheme: 'brewer.Paired12'
+            }
+          },
+
           scales: {
             yAxes: [{
               gridLines: {
