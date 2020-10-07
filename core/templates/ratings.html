@@ -72,12 +72,53 @@
       <h3> Compare aspect ratings of SKUs </h3>
       <div class="dropdown">
         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Choose Brand
+          Choose Brand 1
         </button>
-        <ul class="dropdown-menu" id= "dropdown1" aria-labelledby="dropdownMenuButton">
+        <ul class="dropdown-menu" id= "dropdown_brand1" aria-labelledby="dropdownMenuButton">
+        </ul>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Choose Model 1
+        </button>
+        <ul class="dropdown-menu" id= "dropdown_model1" aria-labelledby="dropdownMenuButton">
+        </ul>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Choose Brand 2
+        </button>
+        <ul class="dropdown-menu" id= "dropdown_brand2" aria-labelledby="dropdownMenuButton">
+        </ul>
+      </div>
+      <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Choose Model 2
+        </button>
+        <ul class="dropdown-menu" id= "dropdown_model2" aria-labelledby="dropdownMenuButton">
         </ul>
       </div>
       <p><p></p>
+      <div class="row">
+        <div class="col-xl-12 mb-5 mb-xl-0">
+          <div class="card shadow">
+            <div class="card-header bg-transparent">
+              <div class="row align-items-center">
+                <div class="col">
+                  <h6 class="text-uppercase text-muted ls-1 mb-1">Polar Comparison chart</h6>
+                  <h2 class="mb-0">Compare two or more models - Aspect rating</h2>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Chart -->
+              <div class="chart">
+                <canvas id="chart-polarComparison" class="chart-canvas"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
 
     
@@ -94,8 +135,9 @@
 <!-- Specific JS goes HERE --> 
 {% block javascripts %}
 <script>
+//Dictionary of brand-model labels and aspect ratings
+var polarArray = []
 
-var brand
 $.ajax({
       method:"GET",
       url:'http://ec2-3-7-69-109.ap-south-1.compute.amazonaws.com:8000/api/dashboard/brand-model/headphones',
@@ -109,23 +151,58 @@ $.ajax({
       }
 
     })
-
+var brand
 function populateBrandmodels(data){
   brand_array = Object.keys(data)
+  json_data = data
   for (var i=0;i<15;i++){
+    $('#dropdown_brand1').append($("<li class='dropdown-item'></li>").val(brand_array[i]).html(brand_array[i]))
+    $('#dropdown_brand2').append($("<li class='dropdown-item'></li>").val(brand_array[i]).html(brand_array[i]))
     $('#dropdown1').append($("<li class='dropdown-item'></li>").val(brand_array[i]).html(brand_array[i]))
   }
 }
 
-
 $('#dropdown1 li').click(function(){
   $(this).parents(".dropdown").find('.btn').html($(this).text());
   brand = $(this).text()
+  brand_sku_array =  json_data[brand]
   brandRatingChart(brand)
   aspectRatingChart(brand)
 })
+var brand1
+$('#dropdown_brand1 li').click(function(){
+  $(this).parents(".dropdown").find('.btn').html($(this).text());
+  brand1 = $(this).text()
+  brand_sku_array =  json_data[brand1]
+  $('#dropdown_model1').empty()
+  for (var i=0;i<brand_sku_array.length;i++){
+    $('#dropdown_model1').append($("<li class='dropdown-item'></li>").val(brand_sku_array[i]).html(brand_sku_array[i]))
+  }
+})
 
-brandRatingChart('mi')
+$('#dropdown_model1').on('click','li',function(){
+  $(this).parents(".dropdown").find('.btn').html($(this).text());
+  model = $(this).text()
+  buildPolarArray(model,brand1)
+})
+
+var brand2
+$('#dropdown_brand2 li').click(function(){
+  $(this).parents(".dropdown").find('.btn').html($(this).text());
+  brand2 = $(this).text()
+  brand_sku_array =  json_data[brand2]
+  $('#dropdown_model2').empty()
+  for (var i=0;i<brand_sku_array.length;i++){
+    $('#dropdown_model2').append($("<li class='dropdown-item'></li>").val(brand_sku_array[i]).html(brand_sku_array[i]))
+  }
+})
+
+$('#dropdown_model2').on('click','li',function(){
+  $(this).parents(".dropdown").find('.btn').html($(this).text());
+  model = $(this).text()
+  buildPolarArray(model,brand2)
+})
+
 
 function brandRatingChart(brand) {
     var $chart = $('#chart-brandrating')
@@ -244,7 +321,7 @@ function brandRatingChart(brand) {
   // }
 
 };
-aspectRatingChart('boat')
+
 
 function aspectRatingChart(brand) {
     var $chart = $('#chart-aspectrating')
@@ -383,6 +460,130 @@ function aspectRatingChart(brand) {
 
 };
 
+
+// Construct polarArray and if more than 1 entries, construct the polar chart
+function buildPolarArray(model,brand){
+  var endpoint = 'http://ec2-3-7-69-109.ap-south-1.compute.amazonaws.com:8000/api/dashboard/aspect-rating/headphones'
+  var queryParams='?brand='+brand
+  var new_endpoint = endpoint+queryParams
+  
+  $.ajax({
+      method:"GET",
+      url:new_endpoint,
+      async: false,
+      success: function(data){
+        console.log(data)
+       for (var i=0;i<data.length;i++){
+         if(data[i].model==model){
+           var dict = {}
+           dict['label']="brand"+" "+"model"
+           dict['rating']=data[i].aspect_rating
+           polarArray.push(dict)
+         }
+        }
+        if (polarArray.length>1){
+          buildPolarChart(polarArray)
+        }
+      },   
+      error: function(error_data){
+          //console.log(error)
+          console.log(error_data)
+      }
+
+    })
+}
+
+function buildPolarChart(polarArray) {
+    var aspect_array = []
+    var datasets = []
+    var $chart = $('#chart-polarComparison')
+    
+    // Create aspect array from all the aspect ratings of models shared
+    for (var i=0;i<polarArray.length;i++){
+      aspect_keys = Object.keys(polarArray[i]['rating'])
+      for (var j=0;j<aspect_keys.length;j++){
+        if (!aspect_array.includes(aspect_keys[j])){
+          aspect_array.push(aspect_keys[j])
+        }
+      }
+    }
+    
+    for (var i=0;i<polarArray.length;i++){
+      aspect_keys = Object.keys(polarArray[i]['rating'])
+      var data_array = new Array(aspect_array.length)
+      for (var j=0;j<aspect_keys.length;j++){
+        var index =  aspect_array.indexOf(aspect_keys[j])
+        data_array[index]=polarArray[i]['rating'][aspect_keys[j]]
+      }
+      datasets.push({label:polarArray[i]['label'],data:data_array})
+    }
+   
+
+    function initChart($chart,aspect_array,datasets) {
+      var polarChart = new Chart($chart, {
+        type: 'polar',
+        options: {
+          legend: {
+            display:true,
+						position: 'top',
+					},
+          onClick:function(evt){
+          },
+          
+          // plugins: {
+          //   colorschemes: {
+          //       scheme: 'brewer.Paired12'
+          //   }
+          // },
+
+          scales: {
+            yAxes: [{
+              gridLines: {
+                lineWidth: 1,
+                color: Charts.colors.gray[900],
+                zeroLineColor: Charts.colors.gray[900]
+              },
+
+              ticks: {
+                callback: function(value) {
+                //   if (!(value % 10)) {
+                //     return '$' + value + 'k';
+                //   }
+                return value;
+                },
+                min:2,
+              }
+            }]
+          },
+          tooltips: {
+            callbacks: {
+              label: function(item, data) {
+                var label = data.datasets[item.datasetIndex].label || '';
+                var yLabel = item.yLabel;
+                var content = label + ' ' + yLabel;
+                return content;
+              }
+            }
+          }
+        },
+        data: {
+          labels: aspect_array,
+          datasets: datasets
+        }
+      });
+  
+      // Save to jQuery object
+  
+      $chart.data('chart', polarChart);
+  
+    };
+    // Events
+
+  if ($chart.length) {
+    initChart($chart,aspect_array,datasets)
+  }
+
+};
 
 </script>
 
