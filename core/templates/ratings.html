@@ -213,7 +213,6 @@ function brandRatingChart(brand) {
     var ratings_array=[]
     var weeks = []
     var new_endpoint = endpoint+queryParams
-    console.log(new_endpoint)
     var overall_ratings=[]
     $.ajax({
       method:"GET",
@@ -222,13 +221,13 @@ function brandRatingChart(brand) {
       success: function(data){     
           for (var brand in data){
               for (var i=0;i<data[brand].length;i++){
-                var model = data[brand][i].product_title.split(' ').slice(0,4).join(' ')
+                var model = data[brand][i].model
                 ratings_array = data[brand][i].ratings
                 var model_ratings=[]
                 var sum_reviews = 0
                 var j
                 for (j=0;j<ratings_array.length;j++){
-                  model_ratings.push(ratings_array[j].rating.toFixed(2))
+                  model_ratings.push(Number(ratings_array[j].rating).toFixed(1))
                   sum_reviews += ratings_array[j].num_reviews
                 }
                 var avg_reviews = sum_reviews/j
@@ -321,7 +320,6 @@ function brandRatingChart(brand) {
   // }
 
 };
-
 
 function aspectRatingChart(brand) {
     var $chart = $('#chart-aspectrating')
@@ -466,18 +464,17 @@ function buildPolarArray(model,brand){
   var endpoint = 'http://ec2-3-7-69-109.ap-south-1.compute.amazonaws.com:8000/api/dashboard/aspect-rating/headphones'
   var queryParams='?brand='+brand
   var new_endpoint = endpoint+queryParams
-  
+  console.log(model)
   $.ajax({
       method:"GET",
       url:new_endpoint,
       async: false,
       success: function(data){
-        console.log(data)
-       for (var i=0;i<data.length;i++){
-         if(data[i].model==model){
+       for (var i=0;i<data[brand].length;i++){
+         if(data[brand][i].model===model){
            var dict = {}
-           dict['label']="brand"+" "+"model"
-           dict['rating']=data[i].aspect_rating
+           dict['label']=model
+           dict['rating']=data[brand][i].aspect_rating
            polarArray.push(dict)
          }
         }
@@ -494,6 +491,7 @@ function buildPolarArray(model,brand){
 }
 
 function buildPolarChart(polarArray) {
+    console.log(polarArray)
     var aspect_array = []
     var datasets = []
     var $chart = $('#chart-polarComparison')
@@ -521,7 +519,7 @@ function buildPolarChart(polarArray) {
 
     function initChart($chart,aspect_array,datasets) {
       var polarChart = new Chart($chart, {
-        type: 'polar',
+        type: 'radarx',
         options: {
           legend: {
             display:true,
