@@ -236,6 +236,129 @@
             </div>
           </div>
         </div>
+        <p><p></p>
+        <div class="row">
+          <div class="col-xl-2 mb-5 mb-xl-0">
+            
+              <div class="card shadow">
+                <div class="card-header bg-transparent">
+                  <div class="row align-items-center">
+                    <div class="col">
+                      <h6 class="text-uppercase text-muted ls-1 mb-1">Price Segment</h6>
+                      <h2 class="mb-0"><500</h2>
+                    </div>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <!-- Chart -->
+                  <div class="chart">
+                    <canvas id="chart-pricebar1" class="chart-canvas"></canvas>
+                  </div>
+                </div>
+              </div>   
+          </div>
+
+          <div class="col-xl-2 mb-5 mb-xl-0">
+            
+            <div class="card shadow">
+              <div class="card-header bg-transparent">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-uppercase text-muted ls-1 mb-1">Price Segment</h6>
+                    <h2 class="mb-0">500-1000</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- Chart -->
+                <div class="chart">
+                  <canvas id="chart-pricebar2" class="chart-canvas"></canvas>
+                </div>
+              </div>
+            </div>   
+          </div>
+
+          <div class="col-xl-2 mb-5 mb-xl-0">
+            
+            <div class="card shadow">
+              <div class="card-header bg-transparent">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-uppercase text-muted ls-1 mb-1">Price Segment</h6>
+                    <h2 class="mb-0">1000-2000</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- Chart -->
+                <div class="chart">
+                  <canvas id="chart-pricebar3" class="chart-canvas"></canvas>
+                </div>
+              </div>
+            </div>   
+          </div>
+          
+          <div class="col-xl-2 mb-5 mb-xl-0">
+                
+            <div class="card shadow">
+              <div class="card-header bg-transparent">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-uppercase text-muted ls-1 mb-1">Price Segment</h6>
+                    <h2 class="mb-0">2000-3000</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- Chart -->
+                <div class="chart">
+                  <canvas id="chart-pricebar4" class="chart-canvas"></canvas>
+                </div>
+              </div>
+            </div>   
+          </div>
+
+          <div class="col-xl-2 mb-5 mb-xl-0">
+                
+            <div class="card shadow">
+              <div class="card-header bg-transparent">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-uppercase text-muted ls-1 mb-1">Price Segment</h6>
+                    <h2 class="mb-0">3000-5000</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- Chart -->
+                <div class="chart">
+                  <canvas id="chart-pricebar5" class="chart-canvas"></canvas>
+                </div>
+              </div>
+            </div>   
+          </div>
+
+          <div class="col-xl-2 mb-5 mb-xl-0">
+                  
+            <div class="card shadow">
+              <div class="card-header bg-transparent">
+                <div class="row align-items-center">
+                  <div class="col">
+                    <h6 class="text-uppercase text-muted ls-1 mb-1">Price Segment</h6>
+                    <h2 class="mb-0">5000</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <!-- Chart -->
+                <div class="chart">
+                  <canvas id="chart-pricebar6" class="chart-canvas"></canvas>
+                </div>
+              </div>
+            </div>   
+          </div>
+      
+      </div>
         {% include "includes/footer.html" %}
       
       </div>
@@ -262,7 +385,7 @@ var brandSKUChart = (function() {
       url:endpoint,
       success: function(data){
           for (var i=0;i<data.length;i++){
-              var model = data[i].model.split(' ').slice(0,4).join(' ')
+              var model = data[i].model
               models.push(model)
               reviews.push(data[i].num_reviews)
           }
@@ -475,11 +598,9 @@ function initChart($chart,models,reviews) {
       }
     },
     data: {
-      //labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       labels:models,
       datasets: [{
         label: 'Sales',
-        //data: [25, 20, 30, 22, 30, 29]
         data:reviews
       }]
     }
@@ -637,11 +758,9 @@ function initChart($chart,models,reviews) {
       }
     },
     data: {
-      //labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       labels:models,
       datasets: [{
         label: 'Sales',
-        //data: [25, 20, 30, 22, 30, 29]
         data:reviews
       }]
     }
@@ -650,12 +769,6 @@ function initChart($chart,models,reviews) {
   // Save to jQuery object
   $chart.data('chart', WirelessSKUChart);
 }
-
-
-// // Init chart
-// if ($chart.length) {
-//   initChart($chart);
-// }
 
 })();
 
@@ -728,7 +841,6 @@ var WirelessBrandChart = (function() {
 var TwsSKUChart = (function() {
   var endpoint = '/tws-skus'
   var $chart = $('#chart-twsbar');
-  //var $ordersSelect = $('[name="ordersSelect"]');
 
   var models=[]
   var reviews = []
@@ -750,12 +862,7 @@ var TwsSKUChart = (function() {
 
   })
 
-//Variables
 
-
-
-//
-// Methods
 //
 // Init chart
 function initChart($chart,models,reviews) {
@@ -798,12 +905,11 @@ function initChart($chart,models,reviews) {
         }
       }
     },
-    data: {
-      //labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    data: {   
       labels:models,
       datasets: [{
         label: 'Sales',
-        //data: [25, 20, 30, 22, 30, 29]
+        
         data:reviews
       }]
     }
@@ -813,11 +919,6 @@ function initChart($chart,models,reviews) {
   $chart.data('chart', TwsSKUChart);
 }
 
-
-// // Init chart
-// if ($chart.length) {
-//   initChart($chart);
-// }
 
 })();
 
@@ -850,7 +951,7 @@ var TwsBrandChart = (function() {
 
   function initChart($chart,brands,reviews) {
 
-    var salesChart = new Chart($chart, {
+    var TwsBrandChart = new Chart($chart, {
       type: 'pie',
        options: [], 
       data: {
@@ -879,14 +980,98 @@ var TwsBrandChart = (function() {
       }
     });
 
-    // Save to jQuery object
-
     $chart.data('chart', TwsBrandChart);
 
   };
 
 })();
 
+var priceStackChart = (function() {
+  var endpoint = 'http://ec2-3-7-69-109.ap-south-1.compute.amazonaws.com:8000/api/dashboard/brandmarketshare/headphones/8/6'
+  
+  //var $chart = $('#chart-pricebar');
+
+  var price_segments=['<500','500-1000','1000-2000','2000-3000','3000-5000','>5000']
+  var i
+  for (i=0;i<price_segments.length;i++){
+    
+    var chart_id= '#chart-pricebar'+String(i+1)
+    var $chart = $(chart_id)
+    var datasets =[]
+    var query_params = '?subcategory='+price_segments[i]
+    $.ajax({
+    method:"GET",
+    url:endpoint+query_params,
+    async:false,
+    success: function(data){
+        for (var j=0;j<data.length;j++){
+            datasets.push({label:data[j].brand,data:[[data[j].num_reviews]]})
+        }
+        initChart($chart,datasets)
+    },
+    error: function(error_data){
+        console.log(error_data)
+    }
+    })
+  
+
+  }
+
+//
+// Methods
+//
+// Init chart
+async function initChart($chart,datasets) {
+  console.log('hi')
+  // Create chart
+  var chart_name = new Chart($chart, {
+    type: 'bar',
+    options: {
+      scales: {
+        yAxes: [{
+          gridLines: {
+            lineWidth: 1,
+            color: '#dfe2e6',
+            zeroLineColor: '#dfe2e6'
+          },
+          ticks: {
+            callback: function(value) {
+              if (!(value % 10)) {
+                //return '$' + value + 'k'
+                return value
+              }
+            }
+          }
+        }]
+      },
+      tooltips: {
+        callbacks: {
+          label: function(item, data) {
+            var label = data.datasets[item.datasetIndex].label || '';
+            var yLabel = item.yLabel;
+            var content = '';
+
+            if (data.datasets.length > 1) {
+              content += '<span class="popover-body-label mr-auto">' + label + '</span>';
+            }
+
+            content += '<span class="popover-body-value">' + yLabel + '</span>';
+
+            return content;
+          }
+        }
+      }
+    },
+    data: {
+      datasets: datasets
+    }
+  });
+
+  // Save to jQuery object
+  $chart.data('chart', chart_name);
+}
+
+})();
 
 
 
